@@ -63,6 +63,7 @@ import de.tubs.bibtextohtml.htmlgenerator.hTMLGenerator.FontColor
 import java.util.Map
 import java.util.HashMap
 import de.tubs.bibtextohtml.htmlgenerator.hTMLGenerator.FontColorRGB
+import de.tubs.bibtextohtml.htmlgenerator.hTMLGenerator.FontStyles
 
 /**
  * Generates code from your model files on save.
@@ -187,16 +188,18 @@ class HTMLGeneratorGenerator implements IGenerator {
 
 	def printStyles(Styles styles, String pre) '''
 		.«pre»«IF !styles.isWildcard»«styles.attributeType»«ELSEIF styles.wildcard»*«ENDIF» {
-			«IF styles.fontStyles.isBold»font-weight: bold;«ENDIF»
-			«IF styles.fontStyles.isItalic»font-style: italic;«ENDIF»
-			«IF styles.fontStyles.isUnderlined»text-decoration: underline;«ENDIF»
+			«IF (styles.eContents.filter(FontStyles).size > 0)»
+				«IF styles.fontStyles.isBold»font-weight: bold;«ENDIF»
+				«IF styles.fontStyles.isItalic»font-style: italic;«ENDIF»
+				«IF styles.fontStyles.isUnderlined»text-decoration: underline;«ENDIF»
+			«ENDIF»
 			«IF (styles.eContents.filter(FontColor).size > 0)»color: «(styles.eContents.filter(FontColor).get(0) as FontColor).color»;«ENDIF»
 			«IF (styles.eContents.filter(FontColorRGB).size > 0)»
 			color: rgb(«(styles.eContents.filter(FontColorRGB).get(0) as FontColorRGB).red»,
 			«(styles.eContents.filter(FontColorRGB).get(0) as FontColorRGB).green»,
 			«(styles.eContents.filter(FontColorRGB).get(0) as FontColorRGB).blue»);
 			«ENDIF»
-			«IF (!styles.fontFamily.empty)»font-family: "«styles.fontFamily»";«ENDIF»
+			«IF (!styles.fontFamily.isNullOrEmpty)»font-family: "«styles.fontFamily»";«ENDIF»
 		}
 	'''
 	
@@ -275,7 +278,7 @@ class HTMLGeneratorGenerator implements IGenerator {
 			   <span class="«pre»journal"><i>«(entry.eContents.filter(JournalField).get(0) as JournalField).journal»</i></span>, 
 			   «IF (entry.eContents.filter(VolumeField).size > 0)»<span class="«pre»volume">«(entry.eContents.filter(VolumeField).get(0) as VolumeField).volume»</span>«ENDIF»
 			   		«IF (entry.eContents.filter(NumberField).size > 0)»(<span class="«pre»number">«(entry.eContents.filter(NumberField).get(0) as NumberField).number»</span>):«ENDIF»
-			   		«IF (entry.eContents.filter(PagesField).size > 0)»<span class="«pre»pages">«(entry.eContents.filter(PagesField).get(0) as PagesField).pages»</span>«ENDIF», 
+			   		«IF (entry.eContents.filter(PagesField).size > 0)»<span class="«pre»pages">«(entry.eContents.filter(PagesField).get(0) as PagesField).pages»</span>,«ENDIF» 
 			   «IF (entry.eContents.filter(MonthField).size > 0)»<span class="«pre»month">«(entry.eContents.filter(MonthField).get(0) as MonthField).month»</span>«ENDIF»
 			   <span class="«pre»year">«(entry.eContents.filter(YearField).get(0) as YearField).year»</span>. 
 			   «IF (entry.eContents.filter(NoteField).size > 0)»<span class="«pre»note">«(entry.eContents.filter(NoteField).get(0) as NoteField).note»</span>.«ENDIF»
