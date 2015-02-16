@@ -3,14 +3,17 @@ module Demo (alphanum) {
 	import "example.bib"
 	options = [
 		prefix : "userprefix-"
-		sorting :author asc
-		category : year desc 
+		sorting: author asc
+		category: year desc
 	]
 	styles = [
 		author {
 			font-styles: bold;
 			font-color: blue;
 			font-family: "Courier New";
+		}
+		title  {
+			font-color: rgb(0,255,0);
 		}
 	]
 }
